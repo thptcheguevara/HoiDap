@@ -1,0 +1,5 @@
+{
+  "name": "Hỏi Đáp Che Guevara",
+  "description": "An interactive Q&A application where users can post questions with attachments, get answers from other users, and receive AI-powered suggestions from Gemini. Features include user profiles, question tracking, and statistics.",
+  "requestFramePermissions": []
+}
