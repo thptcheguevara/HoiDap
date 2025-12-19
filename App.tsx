@@ -17,15 +17,25 @@ const fileToDataUrl = (file: File): Promise<string> => {
 const App: React.FC = () => {
   const [questions, setQuestions] = useLocalStorage<Question[]>('questions', []);
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
-    if (questions.length > 0 && selectedQuestionId === null) {
-      setSelectedQuestionId(questions[0].id);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile && questions.length > 0 && selectedQuestionId === null) {
+      // On desktop, auto-select first question if none is selected
+      // setSelectedQuestionId(questions[0].id); 
     }
     if (questions.length === 0) {
       setSelectedQuestionId(null);
     }
-  }, [questions, selectedQuestionId]);
+  }, [questions, selectedQuestionId, isMobile]);
 
   const addQuestion = async (content: string, attachmentFile: File | null) => {
     let attachmentData: Attachment | null = null;
@@ -81,18 +91,43 @@ const App: React.FC = () => {
 
   const selectedQuestion = questions.find(q => q.id === selectedQuestionId);
 
+  if (isMobile) {
+    return (
+      <div className="h-screen bg-slate-50 text-slate-800">
+        {!selectedQuestionId ? (
+          <LeftSidebar
+            questions={questions}
+            selectedQuestionId={selectedQuestionId}
+            onSelectQuestion={setSelectedQuestionId}
+            onAddQuestion={addQuestion}
+          />
+        ) : (
+          <MainContent
+            question={selectedQuestion}
+            onAddAnswer={addAnswer}
+            onBack={() => setSelectedQuestionId(null)}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-slate-50 text-slate-800">
-      <LeftSidebar
-        questions={questions}
-        selectedQuestionId={selectedQuestionId}
-        onSelectQuestion={setSelectedQuestionId}
-        onAddQuestion={addQuestion}
-      />
-      <MainContent
-        question={selectedQuestion}
-        onAddAnswer={addAnswer}
-      />
+      <div className="w-1/5 flex-shrink-0">
+        <LeftSidebar
+          questions={questions}
+          selectedQuestionId={selectedQuestionId}
+          onSelectQuestion={setSelectedQuestionId}
+          onAddQuestion={addQuestion}
+        />
+      </div>
+      <div className="w-4/5">
+        <MainContent
+          question={selectedQuestion}
+          onAddAnswer={addAnswer}
+        />
+      </div>
     </div>
   );
 };

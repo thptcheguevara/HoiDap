@@ -7,9 +7,10 @@ import { getAnswerSuggestion } from '../services/geminiService';
 interface MainContentProps {
   question: Question | undefined;
   onAddAnswer: (questionId: string, content: string, attachment: File | null, author: string) => Promise<void>;
+  onBack?: () => void;
 }
 
-export const MainContent: React.FC<MainContentProps> = ({ question, onAddAnswer }) => {
+export const MainContent: React.FC<MainContentProps> = ({ question, onAddAnswer, onBack }) => {
   const [newAnswer, setNewAnswer] = useState('');
   const [attachment, setAttachment] = useState<File | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -87,7 +88,7 @@ export const MainContent: React.FC<MainContentProps> = ({ question, onAddAnswer 
 
   if (!question) {
     return (
-      <div className="w-4/5 flex items-center justify-center bg-white">
+      <div className="w-full h-full flex items-center justify-center bg-white">
         <p className="text-slate-500">Chọn một câu hỏi để xem chi tiết.</p>
       </div>
     );
@@ -110,14 +111,17 @@ export const MainContent: React.FC<MainContentProps> = ({ question, onAddAnswer 
     }
   };
 
-  const handleGeminiSuggest = async () => {
+  const handleGeminiAnswer = async () => {
     setIsGenerating(true);
     try {
       const suggestion = await getAnswerSuggestion(question.content);
-      setNewAnswer(suggestion);
+      if (suggestion && suggestion !== "Không thể tạo câu trả lời. Vui lòng thử lại.") {
+        await onAddAnswer(question.id, suggestion, null, 'Gemini AI');
+      } else {
+        console.error("Gemini failed to provide a valid answer.");
+      }
     } catch (error) {
-      console.error("Error getting suggestion from Gemini:", error);
-      setNewAnswer("Xin lỗi, đã có lỗi xảy ra khi lấy gợi ý.");
+      console.error("Error getting answer from Gemini:", error);
     } finally {
       setIsGenerating(false);
     }
@@ -125,7 +129,7 @@ export const MainContent: React.FC<MainContentProps> = ({ question, onAddAnswer 
 
 
   return (
-    <div className="w-4/5 flex flex-col h-screen bg-white">
+    <div className="w-full flex flex-col h-screen bg-white">
        {zoomedImage && (
         <div
           className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
@@ -147,6 +151,19 @@ export const MainContent: React.FC<MainContentProps> = ({ question, onAddAnswer 
         </div>
       )}
 
+      {onBack && (
+        <div className="p-4 border-b border-slate-200 flex items-center shrink-0">
+            <button onClick={onBack} className="mr-4 text-slate-500 hover:text-sky-500 transition-colors" aria-label="Quay lại">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </button>
+            <h2 className="text-lg font-semibold text-slate-700 truncate">
+                Chi tiết câu hỏi
+            </h2>
+        </div>
+      )}
+
       <div className="flex-grow p-6 overflow-y-auto">
         {/* Question */}
         <div className="mb-6">
@@ -159,17 +176,26 @@ export const MainContent: React.FC<MainContentProps> = ({ question, onAddAnswer 
 
         {/* Answers */}
         <div className="space-y-4">
-          {question.answers.map((answer: Answer) => (
-            <div key={answer.id} className="flex justify-end">
-              <div className="w-auto max-w-xl">
-                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg shadow-sm">
-                  <p className="text-slate-800 whitespace-pre-wrap">{answer.content}</p>
-                  <AttachmentDisplay attachment={answer.attachment} />
-                  <p className="text-right text-xs text-slate-400 mt-2">{new Date(answer.timestamp).toLocaleString()}</p>
+          {question.answers.map((answer: Answer) => {
+            const isAI = answer.author === 'Gemini AI';
+            return (
+              <div key={answer.id} className={`flex ${isAI ? 'justify-start' : 'justify-end'}`}>
+                <div className="w-auto max-w-xl">
+                  <div className={`p-4 border rounded-lg shadow-sm ${isAI ? 'bg-slate-100 border-slate-200' : 'bg-emerald-50 border-emerald-200'}`}>
+                    {isAI && (
+                      <div className="flex items-center gap-2 mb-2">
+                        <GeminiIcon className="w-5 h-5 text-slate-600" />
+                        <p className="text-sm font-semibold text-slate-700">Gemini AI</p>
+                      </div>
+                    )}
+                    <p className="text-slate-800 whitespace-pre-wrap">{answer.content}</p>
+                    <AttachmentDisplay attachment={answer.attachment} />
+                    <p className="text-right text-xs text-slate-400 mt-2">{new Date(answer.timestamp).toLocaleString()}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <div ref={endOfMessagesRef} />
       </div>
@@ -193,10 +219,10 @@ export const MainContent: React.FC<MainContentProps> = ({ question, onAddAnswer 
           />
           <div className="absolute top-1/2 right-3 transform -translate-y-1/2 flex items-center space-x-2">
             <button
-                onClick={handleGeminiSuggest}
+                onClick={handleGeminiAnswer}
                 className="text-slate-500 hover:text-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isGenerating}
-                title="Gợi ý trả lời bằng Gemini"
+                title="Trả lời bằng Gemini AI"
             >
               {isGenerating ? 
                 <div className="w-6 h-6 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div> :
@@ -207,7 +233,7 @@ export const MainContent: React.FC<MainContentProps> = ({ question, onAddAnswer 
               <PaperclipIcon className="w-6 h-6" />
             </button>
             <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-            <button onClick={handleAddAnswer} className="text-slate-500 hover:text-emerald-500 transition-colors">
+            <button onClick={handleAddAnswer} className="bg-emerald-500 text-white p-1.5 rounded-lg hover:bg-emerald-600 transition-colors">
               <SendIcon className="w-6 h-6" />
             </button>
           </div>

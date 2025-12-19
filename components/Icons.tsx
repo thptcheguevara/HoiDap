@@ -18,8 +18,8 @@ export const PaperclipIcon: React.FC<IconProps> = ({ className }) => (
 );
 
 export const SendIcon: React.FC<IconProps> = ({ className }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
   </svg>
 );
 
@@ -30,13 +30,22 @@ export const ChatBubbleIcon: React.FC<IconProps> = ({ className }) => (
 );
 
 export const GeminiIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.49988 11.25C8.04988 11.25 8.49988 10.8 8.49988 10.25C8.49988 9.7 8.04988 9.25 7.49988 9.25C6.94988 9.25 6.49988 9.7 6.49988 10.25C6.49988 10.8 6.94988 11.25 7.49988 11.25Z" fill="currentColor"/>
-        <path d="M13.4999 19.25C14.0499 19.25 14.4999 18.8 14.4999 18.25C14.4999 17.7 14.0499 17.25 13.4999 17.25C12.9499 17.25 12.4999 17.7 12.4999 18.25C12.4999 18.8 12.9499 19.25 13.4999 19.25Z" fill="currentColor"/>
-        <path d="M10.75 2.75C10.75 2.2 10.3 1.75 9.75 1.75C9.2 1.75 8.75 2.2 8.75 2.75V6.01001C8.75 6.56001 9.2 7.01001 9.75 7.01001C10.3 7.01001 10.75 6.56001 10.75 6.01001V2.75Z" fill="currentColor"/>
-        <path d="M12.91 10.9C14.65 10.15 16.65 10.59 18.06 12C19.47 13.41 19.9 15.41 19.16 17.15L12.91 10.9Z" fill="currentColor"/>
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <defs>
+        <linearGradient id="gemini-icon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#EA4335" />
+          <stop offset="30%" stopColor="#FBBC05" />
+          <stop offset="70%" stopColor="#4285F4" />
+          <stop offset="100%" stopColor="#34A853" />
+        </linearGradient>
+      </defs>
+      <path 
+        d="M12,0 C18,5 22,9 24,12 C22,15 18,19 12,24 C6,19 2,15 0,12 C2,9 6,5 12,0 Z" 
+        fill="url(#gemini-icon-gradient)" 
+      />
     </svg>
 );
+
 
 export const UserIcon: React.FC<IconProps> = ({ className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

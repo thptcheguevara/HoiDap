@@ -63,7 +63,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
 
 
   return (
-    <div className="w-1/5 bg-slate-100 border-r border-slate-200 flex flex-col h-full">
+    <div className="w-full bg-slate-100 border-r border-slate-200 flex flex-col h-full">
       <div className="p-4 border-b border-slate-200">
         <h1 className="text-3xl font-bold text-red-600 text-center select-none"
             style={{ textShadow: '1px 1px 0px #facc15, 2px 2px 0px #f59e0b' }}>
@@ -101,7 +101,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               <PaperclipIcon className="w-6 h-6" />
             </button>
             <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-            <button onClick={handleAddQuestion} className="text-slate-500 hover:text-sky-500 transition-colors">
+            <button onClick={handleAddQuestion} className="bg-sky-500 text-white p-1.5 rounded-lg hover:bg-sky-600 transition-colors">
               <SendIcon className="w-6 h-6" />
             </button>
           </div>
@@ -113,7 +113,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
         )}
       </div>
 
-      <div className="flex-grow overflow-y-auto max-h-[calc(100vh-450px)]">
+      <div className="flex-grow overflow-y-auto">
         {questions.map(q => (
           <div
             key={q.id}
