@@ -233,7 +233,7 @@ export const MainContent: React.FC<MainContentProps> = ({ question, onAddAnswer,
               <PaperclipIcon className="w-6 h-6" />
             </button>
             <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-            <button onClick={handleAddAnswer} className="bg-emerald-500 text-white p-1.5 rounded-lg hover:bg-emerald-600 transition-colors">
+            <button onClick={handleAddAnswer} className="text-slate-500 hover:text-emerald-500 transition-colors">
               <SendIcon className="w-6 h-6" />
             </button>
           </div>

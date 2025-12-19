@@ -101,7 +101,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               <PaperclipIcon className="w-6 h-6" />
             </button>
             <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-            <button onClick={handleAddQuestion} className="bg-sky-500 text-white p-1.5 rounded-lg hover:bg-sky-600 transition-colors">
+            <button onClick={handleAddQuestion} className="text-slate-500 hover:text-sky-500 transition-colors">
               <SendIcon className="w-6 h-6" />
             </button>
           </div>
